@@ -1,9 +1,97 @@
+// import React, { useState, useEffect } from 'react';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import axios from 'axios';
+// import { useSpring, animated, useTransition, config } from 'react-spring';
+// import './todopage.css'; 
+
+
+// const API_URL = 'https://jsonplaceholder.typicode.com/todos';
+
+// const ToDopage = () => {
+//   const [tasks, setTasks] = useState([]);
+//   const [newTask, setNewTask] = useState('');
+//   const [loading, setLoading] = useState(true);
+//   const [addTaskMessage, setAddTaskMessage] = useState('');
+
+//   useEffect(() => {
+//     axios.get(API_URL).then((response) => {
+//       setTasks(response.data);
+//       setLoading(false);
+//     });
+//   }, []);
+
+//   const fadeIn = useSpring({
+//     opacity: 1,
+//     from: { opacity: 0 },
+//     config: { duration: 500 },
+//   });
+
+//   const transitions = useTransition(tasks, {
+//     keys: task => task.id,
+//     from: { transform: 'translate3d(0,-40px,0)', opacity: 0 },
+//     enter: { transform: 'translate3d(0,0px,0)', opacity: 1 },
+//     leave: { transform: 'translate3d(0,-40px,0)', opacity: 0 },
+//     config: config.gentle,
+//   });
+//   const handleCheckboxChange = async (taskId) => {
+//         const updatedTasks = tasks.map((task) =>
+//           task.id === taskId ? { ...task, completed: !task.completed } : task
+//         );
+    
+//         setTasks(updatedTasks);
+    
+//         try {
+//           await axios.put(`${API_URL}/${taskId}`, {
+//             completed: !updatedTasks.find((task) => task.id === taskId).completed,
+//           });
+//         } catch (error) {
+//           console.error('Error updating task:', error);
+//         }
+//       };
+    
+//       const handleDeleteTask = async (taskId, taskToDelete) => {
+//         const taskTitle = taskToDelete?.title;
+    
+//         try {
+//           await axios.delete(`${API_URL}/${taskId}`);
+//           setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+//           setAddTaskMessage(`Task "${taskTitle}" has been deleted.`);
+//         } catch (error) {
+//           console.error('Error deleting task:', error.message);
+//         }
+//       };
+    
+//       const handleAddTask = async () => {
+//         if (newTask.trim() !== '') {
+//           try {
+//             const response = await axios.post(API_URL, {
+//               title: newTask,
+//               completed: false,
+//             });
+    
+//             const newTaskData = {
+//               id: response.data.id,
+//               title: newTask,
+//               completed: false,
+//             };
+    
+//             setTasks((prevTasks) => [...prevTasks, newTaskData]);
+    
+//             setNewTask('');
+    
+//             setAddTaskMessage(`Task "${newTaskData.title}" has been added.`);
+//           } catch (error) {
+//             console.error('Error adding task:', error);
+    
+//             setAddTaskMessage('Error adding task. Please try again.');
+//           }
+//         }
+//       };
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useSpring, animated, useTransition, config } from 'react-spring';
-import './todopage.css'; 
-
+import './todopage.css';
 
 const API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
@@ -14,11 +102,27 @@ const ToDopage = () => {
   const [addTaskMessage, setAddTaskMessage] = useState('');
 
   useEffect(() => {
-    axios.get(API_URL).then((response) => {
-      setTasks(response.data);
+    const loadTasks = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_URL);
+        setTasks(response.data);
+        localStorage.setItem('tasks', JSON.stringify(response.data));
+      } catch (error) {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+          setTasks(JSON.parse(savedTasks));
+        }
+      }
       setLoading(false);
-    });
+    };
+
+    loadTasks();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   const fadeIn = useSpring({
     opacity: 1,
@@ -33,60 +137,60 @@ const ToDopage = () => {
     leave: { transform: 'translate3d(0,-40px,0)', opacity: 0 },
     config: config.gentle,
   });
+
   const handleCheckboxChange = async (taskId) => {
-        const updatedTasks = tasks.map((task) =>
-          task.id === taskId ? { ...task, completed: !task.completed } : task
-        );
-    
-        setTasks(updatedTasks);
-    
-        try {
-          await axios.put(`${API_URL}/${taskId}`, {
-            completed: !updatedTasks.find((task) => task.id === taskId).completed,
-          });
-        } catch (error) {
-          console.error('Error updating task:', error);
-        }
-      };
-    
-      const handleDeleteTask = async (taskId, taskToDelete) => {
-        const taskTitle = taskToDelete?.title;
-    
-        try {
-          await axios.delete(`${API_URL}/${taskId}`);
-          setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-          setAddTaskMessage(`Task "${taskTitle}" has been deleted.`);
-        } catch (error) {
-          console.error('Error deleting task:', error.message);
-        }
-      };
-    
-      const handleAddTask = async () => {
-        if (newTask.trim() !== '') {
-          try {
-            const response = await axios.post(API_URL, {
-              title: newTask,
-              completed: false,
-            });
-    
-            const newTaskData = {
-              id: response.data.id,
-              title: newTask,
-              completed: false,
-            };
-    
-            setTasks((prevTasks) => [...prevTasks, newTaskData]);
-    
-            setNewTask('');
-    
-            setAddTaskMessage(`Task "${newTaskData.title}" has been added.`);
-          } catch (error) {
-            console.error('Error adding task:', error);
-    
-            setAddTaskMessage('Error adding task. Please try again.');
-          }
-        }
-      };
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    );
+
+    setTasks(updatedTasks);
+
+    try {
+      await axios.put(`${API_URL}/${taskId}`, {
+        completed: !updatedTasks.find((task) => task.id === taskId).completed,
+      });
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
+  const handleDeleteTask = async (taskId , taskToDelete) => {
+    const taskTitle = taskToDelete?.title;
+
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+
+    try {
+      await axios.delete(`${API_URL}/${taskId}`);
+      setAddTaskMessage(`Task "${taskTitle}"  has been deleted.`);
+    } catch (error) {
+      console.error('Error deleting task:', error.message);
+    }
+  };
+
+  const handleAddTask = async () => {
+    if (newTask.trim() !== '') {
+      try {
+        const response = await axios.post(API_URL, {
+          title: newTask,
+          completed: false,
+        });
+
+        const newTaskData = {
+          id: response.data.id,
+          title: newTask,
+          completed: false,
+        };
+
+        setTasks((prevTasks) => [...prevTasks, newTaskData]);
+        setNewTask('');
+        setAddTaskMessage(`Task "${newTaskData.title}" has been added.`);
+      } catch (error) {
+        console.error('Error adding task:', error);
+        setAddTaskMessage('Error adding task. Please try again.');
+      }
+    }
+  };
+
 
   if (loading) {
     return <p>Loading...</p>;
