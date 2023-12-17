@@ -1,3 +1,60 @@
+To create a brief README.md for your application, you can follow the structure below:
+
+# To-Do List Application
+
+This is a simple To-Do List application built using React. It retrieves tasks from the [JSONPlaceholder](https://jsonplaceholder.typicode.com/) API and allows users to add, delete, and mark tasks as completed.
+
+## How to Run the Application
+
+1. Clone this repository to your local machine:
+
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd client 
+      ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm start
+   ```
+
+   The application will be accessible at `http://localhost:3000` in your web browser.
+
+## Interacting with the JSONPlaceholder API
+
+The application interacts with the JSONPlaceholder API to fetch, add, update, and delete tasks. The API used in this application is `https://jsonplaceholder.typicode.com/todos`.
+
+- **Fetching Tasks:** The initial tasks are fetched from the API when the application loads.
+
+- **Adding a Task:** Enter a new task in the input field and click the "Add Task" button. The new task will be added to the list, and a success message will be displayed.
+
+- **Completing a Task:** Check or uncheck the checkbox next to a task to mark it as completed or incomplete. The status will be updated both locally and on the server.
+
+- **Deleting a Task:** Click the "Delete" button next to a task to remove it from the list. The task will be deleted both locally and on the server.
+
+## Additional Notes
+
+- The application uses React, Axios for HTTP requests, and React-Spring for animations.
+
+- Loading indication is displayed while tasks are being fetched from the API.
+
+- Error messages are displayed in case of issues with adding, updating, or deleting tasks.
+
+Feel free to explore and enhance the application further based on your requirements!
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

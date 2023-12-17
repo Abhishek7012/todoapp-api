@@ -1,0 +1,10 @@
+/* CSS file */
+.btn:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .task-item:hover {
+    transform: translateY(-5px);
+    transition: transform 0.2s ease-in-out;
+  }
